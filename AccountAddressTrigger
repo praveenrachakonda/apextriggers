@@ -1,0 +1,11 @@
+//Why before insert/Update?
+//Setting the Account Shipping Postal Code to match the Contact Shipping code,
+//doesnt need to associate any record to a record being created/udpated in your trigger.
+
+trigger AccountAddressTrigger on Account (before insert, before update) {
+    for (Account eachAcc : Trigger.new) {
+        if (eachAcc.Match_Billing_Address__c == true) {
+            eachAcc.ShippingPostalCode = eachAcc.BillingPostalCode;
+        }
+    }
+}
