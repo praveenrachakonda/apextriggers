@@ -1,6 +1,5 @@
-//Why after insert/update?
 //Problem statement: This trigger adds a related opportunity for each new or updated account if no opportunity is already associated with the account.
-//
+//Why after insert/update?
 //The trigger adds a new opportunity for each new/updated Opportunity
 //Since we will be using the record Ids of the Account to associate to the Opportunity records we create - we would be using the after insert/update
 trigger AddRelatedRecord on Account (after insert, after update) {
