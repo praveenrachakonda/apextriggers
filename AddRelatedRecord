@@ -1,0 +1,27 @@
+//Why after insert/update?
+//Problem statement: This trigger adds a related opportunity for each new or updated account if no opportunity is already associated with the account.
+//
+//The trigger adds a new opportunity for each new/updated Opportunity
+//Since we will be using the record Ids of the Account to associate to the Opportunity records we create - we would be using the after insert/update
+trigger AddRelatedRecord on Account (after insert, after update) {
+    //I want to query all the accounts and related Opportunities
+    //I want to verify if each account has atleast one opportunity
+    //If none - create a new Opp and add the AccountId
+    //If there are - skip and continue to next account record.
+    
+    //trigger.new will have all the account records
+	List<Account> accts = [SELECT ID, Name, (SELECT ID, Name, AccountId FROM Opportunities) 
+                          FROM Account
+                          WHERE ID IN: Trigger.new];
+    
+    List<Opportunity> oppToCreate = new List<Opportunity>();
+    for (Account eachAcc : accts) {
+        System.debug('opp size ' + (eachAcc.Opportunities).size() + ' is empty? ' + (eachAcc.Opportunities).isEmpty());
+        if (!(eachAcc.Opportunities).isEmpty()) {
+            oppToCreate.add(new Opportunity(Name = 'Test '+ eachAcc.Name, AccountId = eachAcc.Id, StageName = 'Prospecting'));
+        }
+    }
+    if (!oppToCreate.isEmpty()) {
+        insert oppToCreate;
+    }
+}
